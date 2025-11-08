@@ -530,84 +530,100 @@ public class ResumeBuilder {
 
     // ✅ Preview Panel
     private static JPanel createPreviewPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(Color.WHITE);
 
-        JTextArea previewArea = new JTextArea();
-        previewArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        previewArea.setEditable(false);
+    JTextArea previewArea = new JTextArea();
+    previewArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    previewArea.setEditable(false);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+    JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        JButton generatePreviewButton = new JButton("Generate Preview");
-        generatePreviewButton.setBackground(new Color(0, 102, 204));
-        generatePreviewButton.setForeground(Color.WHITE);
+    JButton generatePreviewButton = new JButton("Generate Preview");
+    generatePreviewButton.setBackground(new Color(0, 102, 204));
+    generatePreviewButton.setForeground(Color.WHITE);
 
-        JButton findJobsButton = new JButton("Find Suitable Jobs");
-        findJobsButton.setBackground(new Color(153, 0, 153));
-        findJobsButton.setForeground(Color.WHITE);
+    JButton findJobsButton = new JButton("Find Suitable Jobs");
+    findJobsButton.setBackground(new Color(153, 0, 153));
+    findJobsButton.setForeground(Color.WHITE);
 
-        JButton exportPdfButton = new JButton("Export to PDF");
-        exportPdfButton.setBackground(new Color(220, 20, 60));
-        exportPdfButton.setForeground(Color.WHITE);
+    JButton exportPdfButton = new JButton("Export to PDF");
+    exportPdfButton.setBackground(new Color(220, 20, 60));
+    exportPdfButton.setForeground(Color.WHITE);
 
-        generatePreviewButton.addActionListener(e -> {
-            if (currentUser.getResume() != null) {
-                previewArea.setText(currentUser.getResume().generateResumeText());
-            } else {
-                previewArea.setText("No resume data available. Please fill in the forms.");
-            }
-        });
+    // 🆕 Add dropdown for template selection
+    JLabel templateLabel = new JLabel("Template:");
+    JComboBox<String> templateSelector = new JComboBox<>(new String[]{
+        "Classic", "Modern", "Creative"
+    });
 
-        findJobsButton.addActionListener(e -> {
-            if (currentUser.getResume() != null) {
-                String jobSuggestions = currentUser.getResume().suggestJobs();
-                JOptionPane.showMessageDialog(panel, jobSuggestions, "Job Suggestions", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(panel, "Please create your resume first!");
-            }
-        });
+    // === Button Actions ===
+    generatePreviewButton.addActionListener(e -> {
+        if (currentUser.getResume() != null) {
+            previewArea.setText(currentUser.getResume().generateResumeText());
+        } else {
+            previewArea.setText("No resume data available. Please fill in the forms.");
+        }
+    });
 
-        exportPdfButton.addActionListener(e -> {
-            if (currentUser.getResume() != null) {
-                exportToPDF();
-            } else {
-                JOptionPane.showMessageDialog(panel, "Please create your resume first!");
-            }
-        });
+    findJobsButton.addActionListener(e -> {
+        if (currentUser.getResume() != null) {
+            String jobSuggestions = currentUser.getResume().suggestJobs();
+            JOptionPane.showMessageDialog(panel, jobSuggestions, "Job Suggestions", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(panel, "Please create your resume first!");
+        }
+    });
 
-        buttonPanel.add(generatePreviewButton);
-        buttonPanel.add(findJobsButton);
-        buttonPanel.add(exportPdfButton);
+    // 🆕 Export to PDF based on selected template
+    exportPdfButton.addActionListener(e -> {
+        if (currentUser.getResume() != null) {
+            String selectedTemplate = (String) templateSelector.getSelectedItem();
+            exportToPDF(selectedTemplate);  // call with template
+        } else {
+            JOptionPane.showMessageDialog(panel, "Please create your resume first!");
+        }
+    });
 
-        panel.add(buttonPanel, BorderLayout.NORTH);
-        panel.add(new JScrollPane(previewArea), BorderLayout.CENTER);
-        return panel;
-    }
+    // === Add all components ===
+    buttonPanel.add(generatePreviewButton);
+    buttonPanel.add(findJobsButton);
+    buttonPanel.add(templateLabel);
+    buttonPanel.add(templateSelector);
+    buttonPanel.add(exportPdfButton);
 
-     private static void exportToPDF() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Save PDF As");
-        fileChooser.setSelectedFile(new File(currentUser.getResume().getFullName() + "_Resume.pdf"));
+    panel.add(buttonPanel, BorderLayout.NORTH);
+    panel.add(new JScrollPane(previewArea), BorderLayout.CENTER);
 
-        int userSelection = fileChooser.showSaveDialog(null);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-            if (!fileToSave.getAbsolutePath().toLowerCase().endsWith(".pdf")) {
-                fileToSave = new File(fileToSave.getAbsolutePath() + ".pdf");
-            }
-            try {
-                PDFExporter.exportResumeToPDF(currentUser.getResume(), fileToSave.getAbsolutePath());
-                JOptionPane.showMessageDialog(null,
-                        "Resume successfully exported to PDF!\nLocation: " + fileToSave.getAbsolutePath(),
-                        "PDF Export Successful", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null,
-                        "Error exporting to PDF: " + ex.getMessage(),
-                        "Export Error", JOptionPane.ERROR_MESSAGE);
-            }
+    return panel;
+}
+
+
+    private static void exportToPDF(String template) {
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Save PDF As");
+    fileChooser.setSelectedFile(new File(currentUser.getResume().getFullName() + "_Resume.pdf"));
+
+    int userSelection = fileChooser.showSaveDialog(null);
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+        if (!fileToSave.getAbsolutePath().toLowerCase().endsWith(".pdf")) {
+            fileToSave = new File(fileToSave.getAbsolutePath() + ".pdf");
+        }
+
+        try {
+            PDFExporter.exportResumeToPDF(currentUser.getResume(), fileToSave.getAbsolutePath(), template);
+            JOptionPane.showMessageDialog(null,
+                    "Resume successfully exported to PDF!\nLocation: " + fileToSave.getAbsolutePath(),
+                    "PDF Export Successful", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,
+                    "Error exporting to PDF: " + ex.getMessage(),
+                    "Export Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+}
+
 
     // 🖨 Print/Export to PDF
     private static void printComponent(JTextArea area) {
@@ -629,7 +645,7 @@ public class ResumeBuilder {
         }
     }
 
-    // 🧠 Save & Load User Data
+  
     private static void saveUsers() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
             oos.writeObject(users);
