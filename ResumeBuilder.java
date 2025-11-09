@@ -10,7 +10,8 @@ public class ResumeBuilder {
     private static final String DATA_FILE = "users.dat";
 
     public static void main(String[] args) {
-        loadUsers();
+        UserDAO.createTableIfNotExists();
+    ResumeDAO.createTableIfNotExists();
         showHomePage();
     }
 
@@ -128,14 +129,17 @@ public class ResumeBuilder {
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            if (users.containsKey(username) && users.get(username).getPassword().equals(password)) {
-                currentUser = users.get(username);
-                JOptionPane.showMessageDialog(frame, "Login successful!");
-                frame.dispose();
-                showResumeForm();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Invalid username or password!");
-            }
+            
+            if (UserDAO.validateUser(username, password)) {
+             currentUser = new User(username, password);
+             currentUser.setResume(ResumeDAO.loadResume(username));
+             JOptionPane.showMessageDialog(frame, "Login successful!");
+            frame.dispose();
+            showResumeForm();
+} else {
+            JOptionPane.showMessageDialog(frame, "Invalid username or password!");
+}
+
         });
 
         backButton.addActionListener(e -> {
@@ -208,12 +212,13 @@ public class ResumeBuilder {
                 JOptionPane.showMessageDialog(frame, "Passwords do not match!");
                 return;
             }
-            if (users.containsKey(username)) {
-                JOptionPane.showMessageDialog(frame, "Username already exists!");
-                return;
-            }
-            users.put(username, new User(username, password));
-            saveUsers();
+           if (UserDAO.addUser(username, password)) {
+        JOptionPane.showMessageDialog(frame, "Account created successfully!");
+        frame.dispose();
+        showLoginPage();
+    } else {
+        JOptionPane.showMessageDialog(frame, "Username already exists or an error occurred!");
+    }
             JOptionPane.showMessageDialog(frame, "Account created successfully!");
             frame.dispose();
             showLoginPage();
@@ -320,7 +325,7 @@ public class ResumeBuilder {
             resume.setAddress(fields[3].getText());
             resume.setLinkedIn(fields[4].getText());
             resume.setSummary(summaryArea.getText());
-            saveUsers();
+            ResumeDAO.saveResume(currentUser.getUsername(), resume);
             JOptionPane.showMessageDialog(panel, "Personal Info Saved!");
         });
 
@@ -381,7 +386,8 @@ public class ResumeBuilder {
             listModel.addElement(edu);
             if (currentUser.getResume() == null) currentUser.setResume(new Resume());
             currentUser.getResume().addEducation(edu);
-            saveUsers();
+            ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
             degree.setText(""); inst.setText(""); year.setText(""); gpa.setText("");
         });
 
@@ -390,7 +396,8 @@ public class ResumeBuilder {
             if (idx != -1) {
                 listModel.remove(idx);
                 currentUser.getResume().getEducation().remove(idx);
-                saveUsers();
+               ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
             }
         });
 
@@ -449,7 +456,8 @@ public class ResumeBuilder {
             listModel.addElement(exp);
             if (currentUser.getResume() == null) currentUser.setResume(new Resume());
             currentUser.getResume().addExperience(exp);
-            saveUsers();
+           ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
             comp.setText(""); pos.setText(""); dur.setText(""); desc.setText("");
         });
 
@@ -458,7 +466,8 @@ public class ResumeBuilder {
             if (idx != -1) {
                 listModel.remove(idx);
                 currentUser.getResume().getExperience().remove(idx);
-                saveUsers();
+                ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
             }
         });
 
@@ -504,7 +513,8 @@ public class ResumeBuilder {
             model.addElement(skill.getText());
             if (currentUser.getResume() == null) currentUser.setResume(new Resume());
             currentUser.getResume().addSkill(skill.getText());
-            saveUsers();
+          ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
             skill.setText("");
         });
 
@@ -513,7 +523,8 @@ public class ResumeBuilder {
             if (idx != -1) {
                 model.remove(idx);
                 currentUser.getResume().getSkills().remove(idx);
-                saveUsers();
+                ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
             }
         });
 
@@ -558,7 +569,8 @@ public class ResumeBuilder {
         model.addElement(field.getText());
         if (currentUser.getResume() == null) currentUser.setResume(new Resume());
         currentUser.getResume().addProject(field.getText());
-        saveUsers();
+        ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
         field.setText("");
     });
 
@@ -567,7 +579,8 @@ public class ResumeBuilder {
         if (idx != -1) {
             model.remove(idx);
             currentUser.getResume().getProjects().remove(idx);
-            saveUsers();
+            ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
         }
     });
 
@@ -607,7 +620,8 @@ private static JPanel createCertificationsPanel(JTabbedPane tabbedPane) {
         model.addElement(field.getText());
         if (currentUser.getResume() == null) currentUser.setResume(new Resume());
         currentUser.getResume().addCertification(field.getText());
-        saveUsers();
+        ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
         field.setText("");
     });
 
@@ -616,7 +630,8 @@ private static JPanel createCertificationsPanel(JTabbedPane tabbedPane) {
         if (idx != -1) {
             model.remove(idx);
             currentUser.getResume().getCertifications().remove(idx);
-            saveUsers();
+           ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
         }
     });
 
@@ -656,7 +671,8 @@ private static JPanel createAchievementsPanel(JTabbedPane tabbedPane) {
         model.addElement(field.getText());
         if (currentUser.getResume() == null) currentUser.setResume(new Resume());
         currentUser.getResume().addAchievement(field.getText());
-        saveUsers();
+       ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
         field.setText("");
     });
 
@@ -665,7 +681,8 @@ private static JPanel createAchievementsPanel(JTabbedPane tabbedPane) {
         if (idx != -1) {
             model.remove(idx);
             currentUser.getResume().getAchievements().remove(idx);
-            saveUsers();
+           ResumeDAO.saveResume(currentUser.getUsername(), currentUser.getResume());
+
         }
     });
 
@@ -800,20 +817,5 @@ private static JPanel createAchievementsPanel(JTabbedPane tabbedPane) {
         }
     }
 
-  
-    private static void saveUsers() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
-            oos.writeObject(users);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private static void loadUsers() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
-            users = (HashMap<String, User>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            users = new HashMap<>();
-        }
-    }
 }
