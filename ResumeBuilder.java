@@ -235,11 +235,10 @@ public class ResumeBuilder {
     frame.setSize(900, 600);
     frame.setLocationRelativeTo(null);
 
-    // 🔹 Create a custom JTabbedPane that ignores direct clicks
+    // Custom JTabbedPane that only allows Next/Back navigation
     JTabbedPane tabbedPane = new JTabbedPane() {
         @Override
         public void setSelectedIndex(int index) {
-            // Only allow selection through Next/Back
             int current = getSelectedIndex();
             if (index == current + 1 || index == current - 1 || index == current) {
                 super.setSelectedIndex(index);
@@ -247,28 +246,36 @@ public class ResumeBuilder {
         }
     };
 
-    // 🔹 Add all sections
+    // Create panels
     JPanel personalPanel = createPersonalInfoPanel(tabbedPane);
     JPanel educationPanel = createEducationPanel(tabbedPane);
     JPanel experiencePanel = createExperiencePanel(tabbedPane);
     JPanel skillsPanel = createSkillsPanel(tabbedPane);
+    JPanel projectsPanel = createProjectsPanel(tabbedPane);
+    JPanel certificationsPanel = createCertificationsPanel(tabbedPane);
+    JPanel achievementsPanel = createAchievementsPanel(tabbedPane);
     JPanel previewPanel = createPreviewPanel();
 
+    // Add tabs
     tabbedPane.addTab("Personal Info", personalPanel);
     tabbedPane.addTab("Education", educationPanel);
     tabbedPane.addTab("Experience", experiencePanel);
     tabbedPane.addTab("Skills", skillsPanel);
+    tabbedPane.addTab("Projects", projectsPanel);
+    tabbedPane.addTab("Certifications", certificationsPanel);
+    tabbedPane.addTab("Achievements", achievementsPanel);
     tabbedPane.addTab("Preview & Jobs", previewPanel);
 
-    // 🔹 Disable direct tab navigation (except the first)
+    // Disable direct tab clicks, enable only first tab
     for (int i = 0; i < tabbedPane.getTabCount(); i++) {
         tabbedPane.setEnabledAt(i, false);
     }
-    tabbedPane.setEnabledAt(0, true); // Enable only the first tab initially
+    tabbedPane.setEnabledAt(0, true);
 
     frame.add(tabbedPane);
     frame.setVisible(true);
 }
+
 
     // ✅ Panels with Next/Back buttons + validation
     private static JPanel createPersonalInfoPanel(JTabbedPane tabbedPane) {
@@ -278,7 +285,7 @@ public class ResumeBuilder {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        String[] labels = {"Full Name:", "Email:", "Phone:", "Address:", "LinkedIn:", "Summary:"};
+        String[] labels = {"Full Name:", "Email:", "Phone:", "Address:", "LinkedIn:", "Career Objective:"};
         JTextField[] fields = new JTextField[labels.length - 1];
         JTextArea summaryArea = new JTextArea(4, 30);
 
@@ -527,6 +534,154 @@ public class ResumeBuilder {
         panel.add(buttons, BorderLayout.SOUTH);
         return panel;
     }
+
+    private static JPanel createProjectsPanel(JTabbedPane tabbedPane) {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(Color.WHITE);
+
+    DefaultListModel<String> model = new DefaultListModel<>();
+    JList<String> list = new JList<>(model);
+    JTextField field = new JTextField();
+
+    JButton add = new JButton("Add");
+    JButton remove = new JButton("Remove");
+    JButton back = new JButton("← Back");
+    JButton next = new JButton("Next →");
+
+    add.setBackground(new Color(0, 153, 76)); add.setForeground(Color.WHITE);
+    remove.setBackground(Color.RED); remove.setForeground(Color.WHITE);
+    back.setBackground(Color.GRAY); back.setForeground(Color.WHITE);
+    next.setBackground(new Color(0, 102, 204)); next.setForeground(Color.WHITE);
+
+    add.addActionListener(e -> {
+        if (field.getText().trim().isEmpty()) return;
+        model.addElement(field.getText());
+        if (currentUser.getResume() == null) currentUser.setResume(new Resume());
+        currentUser.getResume().addProject(field.getText());
+        saveUsers();
+        field.setText("");
+    });
+
+    remove.addActionListener(e -> {
+        int idx = list.getSelectedIndex();
+        if (idx != -1) {
+            model.remove(idx);
+            currentUser.getResume().getProjects().remove(idx);
+            saveUsers();
+        }
+    });
+
+    // Fixed navigation: Back -> Skills (3), Next -> Certifications (5)
+    back.addActionListener(e -> tabbedPane.setSelectedIndex(3)); // Skills
+    next.addActionListener(e -> tabbedPane.setSelectedIndex(5)); // Certifications
+
+    JPanel buttons = new JPanel();
+    buttons.add(add); buttons.add(remove); buttons.add(back); buttons.add(next);
+
+    panel.add(field, BorderLayout.NORTH);
+    panel.add(new JScrollPane(list), BorderLayout.CENTER);
+    panel.add(buttons, BorderLayout.SOUTH);
+    return panel;
+}
+
+private static JPanel createCertificationsPanel(JTabbedPane tabbedPane) {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(Color.WHITE);
+
+    DefaultListModel<String> model = new DefaultListModel<>();
+    JList<String> list = new JList<>(model);
+    JTextField field = new JTextField();
+
+    JButton add = new JButton("Add");
+    JButton remove = new JButton("Remove");
+    JButton back = new JButton("← Back");
+    JButton next = new JButton("Next →");
+
+    add.setBackground(new Color(0, 153, 76)); add.setForeground(Color.WHITE);
+    remove.setBackground(Color.RED); remove.setForeground(Color.WHITE);
+    back.setBackground(Color.GRAY); back.setForeground(Color.WHITE);
+    next.setBackground(new Color(0, 102, 204)); next.setForeground(Color.WHITE);
+
+    add.addActionListener(e -> {
+        if (field.getText().trim().isEmpty()) return;
+        model.addElement(field.getText());
+        if (currentUser.getResume() == null) currentUser.setResume(new Resume());
+        currentUser.getResume().addCertification(field.getText());
+        saveUsers();
+        field.setText("");
+    });
+
+    remove.addActionListener(e -> {
+        int idx = list.getSelectedIndex();
+        if (idx != -1) {
+            model.remove(idx);
+            currentUser.getResume().getCertifications().remove(idx);
+            saveUsers();
+        }
+    });
+
+    // Fixed navigation: Back -> Projects (4), Next -> Achievements (6)
+    back.addActionListener(e -> tabbedPane.setSelectedIndex(4)); // Projects
+    next.addActionListener(e -> tabbedPane.setSelectedIndex(6)); // Achievements
+
+    JPanel buttons = new JPanel();
+    buttons.add(add); buttons.add(remove); buttons.add(back); buttons.add(next);
+
+    panel.add(field, BorderLayout.NORTH);
+    panel.add(new JScrollPane(list), BorderLayout.CENTER);
+    panel.add(buttons, BorderLayout.SOUTH);
+    return panel;
+}
+
+private static JPanel createAchievementsPanel(JTabbedPane tabbedPane) {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(Color.WHITE);
+
+    DefaultListModel<String> model = new DefaultListModel<>();
+    JList<String> list = new JList<>(model);
+    JTextField field = new JTextField();
+
+    JButton add = new JButton("Add");
+    JButton remove = new JButton("Remove");
+    JButton back = new JButton("← Back");
+    JButton next = new JButton("Next →");
+
+    add.setBackground(new Color(0, 153, 76)); add.setForeground(Color.WHITE);
+    remove.setBackground(Color.RED); remove.setForeground(Color.WHITE);
+    back.setBackground(Color.GRAY); back.setForeground(Color.WHITE);
+    next.setBackground(new Color(0, 102, 204)); next.setForeground(Color.WHITE);
+
+    add.addActionListener(e -> {
+        if (field.getText().trim().isEmpty()) return;
+        model.addElement(field.getText());
+        if (currentUser.getResume() == null) currentUser.setResume(new Resume());
+        currentUser.getResume().addAchievement(field.getText());
+        saveUsers();
+        field.setText("");
+    });
+
+    remove.addActionListener(e -> {
+        int idx = list.getSelectedIndex();
+        if (idx != -1) {
+            model.remove(idx);
+            currentUser.getResume().getAchievements().remove(idx);
+            saveUsers();
+        }
+    });
+
+    // Fixed navigation: Back -> Certifications (5), Next -> Preview (7)
+    back.addActionListener(e -> tabbedPane.setSelectedIndex(5)); // Certifications
+    next.addActionListener(e -> tabbedPane.setSelectedIndex(7)); // Preview
+
+    JPanel buttons = new JPanel();
+    buttons.add(add); buttons.add(remove); buttons.add(back); buttons.add(next);
+
+    panel.add(field, BorderLayout.NORTH);
+    panel.add(new JScrollPane(list), BorderLayout.CENTER);
+    panel.add(buttons, BorderLayout.SOUTH);
+    return panel;
+}
+
 
     // ✅ Preview Panel
     private static JPanel createPreviewPanel() {

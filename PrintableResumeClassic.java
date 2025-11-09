@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.print.*;
+
 public class PrintableResumeClassic implements Printable {
     private Resume resume;
 
@@ -34,21 +35,21 @@ public class PrintableResumeClassic implements Printable {
 
         y = 110;
 
-      
+        // === OBJECTIVE / SUMMARY ===
         if (resume.getSummary() != null && !resume.getSummary().isEmpty()) {
             y = drawSectionTitle(g2d, "OBJECTIVE", y);
             y = drawMultilineText(g2d, resume.getSummary(), 50, y + 10, 70);
         }
 
-       
+        // === EDUCATION ===
         if (!resume.getEducation().isEmpty()) {
             y = drawSectionTitle(g2d, "EDUCATION", y + 15);
             g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
-            g2d.setColor(Color.DARK_GRAY); // ✅ Make text visible and consistent
+            g2d.setColor(Color.DARK_GRAY);
             for (Education edu : resume.getEducation()) {
-                 g2d.drawString("• " + edu.toString(), 60, y += 18);
-    }
-}
+                g2d.drawString("• " + edu.toString(), 60, y += 18);
+            }
+        }
 
         // === EXPERIENCE ===
         if (!resume.getExperience().isEmpty()) {
@@ -60,26 +61,54 @@ public class PrintableResumeClassic implements Printable {
         }
 
         // === SKILLS ===
-        // === SKILLS ===
         if (!resume.getSkills().isEmpty()) {
             y = drawSectionTitle(g2d, "SKILLS", y + 15);
-    
-            g2d.setColor(Color.DARK_GRAY); // ✅ Reset color to dark gray for visibility
+            g2d.setColor(Color.DARK_GRAY);
             g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
-    
-        int x = 60;
-        int count = 0;
-        for (String skill : resume.getSkills()) {
-            g2d.drawString("• " + skill, x, y += 18);
-            count++;
-            if (count % 2 == 0) {
-                 x = 60;
-             } else {
-                x = 300;
-                y -= 18;
+
+            int x = 60;
+            int count = 0;
+            for (String skill : resume.getSkills()) {
+                g2d.drawString("• " + skill, x, y += 18);
+                count++;
+                if (count % 2 == 0) {
+                    x = 60;
+                } else {
+                    x = 300;
+                    y -= 18;
+                }
+            }
         }
-    }
-}
+
+        // === PROJECTS ===
+        if (!resume.getProjects().isEmpty()) {
+            y = drawSectionTitle(g2d, "PROJECTS", y + 25);
+            g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            g2d.setColor(Color.DARK_GRAY);
+            for (String project : resume.getProjects()) {
+                y = drawMultilineText(g2d, "• " + project, 60, y + 10, 75);
+            }
+        }
+
+        // === CERTIFICATIONS ===
+        if (!resume.getCertifications().isEmpty()) {
+            y = drawSectionTitle(g2d, "CERTIFICATIONS", y + 25);
+            g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            g2d.setColor(Color.DARK_GRAY);
+            for (String cert : resume.getCertifications()) {
+                y = drawMultilineText(g2d, "• " + cert, 60, y + 10, 75);
+            }
+        }
+
+        // === ACHIEVEMENTS ===
+        if (!resume.getAchievements().isEmpty()) {
+            y = drawSectionTitle(g2d, "ACHIEVEMENTS", y + 25);
+            g2d.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            g2d.setColor(Color.DARK_GRAY);
+            for (String ach : resume.getAchievements()) {
+                y = drawMultilineText(g2d, "• " + ach, 60, y + 10, 75);
+            }
+        }
 
         // === FOOTER LINE ===
         g2d.setColor(new Color(180, 180, 180));

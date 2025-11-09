@@ -15,11 +15,18 @@ class Resume implements Serializable {
     private List<Education> education;
     private List<Experience> experience;
     private List<String> skills;
+    private List<String> projects = new ArrayList<>();
+    private List<String> certifications = new ArrayList<>();
+    private List<String> achievements = new ArrayList<>();
+
 
     public Resume() {
         this.education = new ArrayList<>();
         this.experience = new ArrayList<>();
         this.skills = new ArrayList<>();
+        this. projects = new ArrayList<>();
+        this.certifications = new ArrayList<>();
+        this. achievements = new ArrayList<>();
     }
 
     public String getFullName() { return fullName; }
@@ -48,6 +55,15 @@ class Resume implements Serializable {
     
     public List<String> getSkills() { return skills; }
     public void addSkill(String skill) { skills.add(skill); }
+
+     public List<String> getProjects() { return projects; }
+    public void addProject(String p) { projects.add(p); }
+
+    public List<String> getCertifications() { return certifications; }
+    public void addCertification(String c) { certifications.add(c); }
+
+    public List<String> getAchievements() { return achievements; }
+    public void addAchievement(String a) { achievements.add(a); }
 
     public String generateResumeText() {
         StringBuilder sb = new StringBuilder();
@@ -82,6 +98,27 @@ class Resume implements Serializable {
         for (String skill : skills) {
             sb.append("• ").append(skill).append("\n");
         }
+
+        sb.append("Projects:\n");
+sb.append("---------\n");
+for (String project : projects) {
+    sb.append("• ").append(project).append("\n");
+}
+sb.append("\n");
+
+sb.append("Certifications:\n");
+sb.append("---------------\n");
+for (String cert : certifications) {
+    sb.append("• ").append(cert).append("\n");
+}
+sb.append("\n");
+
+sb.append("Achievements:\n");
+sb.append("------------\n");
+for (String ach : achievements) {
+    sb.append("• ").append(ach).append("\n");
+}
+sb.append("\n");
         
         return sb.toString();
     }
