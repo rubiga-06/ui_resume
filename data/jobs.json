@@ -1,0 +1,122 @@
+[
+  {
+    "title": "Java Developer",
+    "company": "Infosys",
+    "location": "Chennai",
+    "skills": ["Java", "Spring Boot", "SQL", "Git", "OOP"]
+  },
+  {
+    "title": "Frontend Web Developer",
+    "company": "Wipro",
+    "location": "Bangalore",
+    "skills": ["HTML", "CSS", "JavaScript", "React", "Bootstrap"]
+  },
+  {
+    "title": "Backend Developer",
+    "company": "HCL Technologies",
+    "location": "Noida",
+    "skills": ["Java", "Spring", "Hibernate", "MySQL", "REST API"]
+  },
+  {
+    "title": "Data Analyst",
+    "company": "TCS",
+    "location": "Hyderabad",
+    "skills": ["Python", "Excel", "SQL", "Pandas", "Data Analysis"]
+  },
+  {
+    "title": "Data Scientist",
+    "company": "Accenture",
+    "location": "Pune",
+    "skills": ["Python", "Machine Learning", "Statistics", "TensorFlow", "Data Visualization"]
+  },
+  {
+    "title": "Mobile App Developer",
+    "company": "Cognizant",
+    "location": "Coimbatore",
+    "skills": ["Kotlin", "Android", "Java", "Firebase"]
+  },
+  {
+    "title": "DevOps Engineer",
+    "company": "Tech Mahindra",
+    "location": "Chennai",
+    "skills": ["Linux", "Docker", "AWS", "Kubernetes", "Python"]
+  },
+  {
+    "title": "Cybersecurity Analyst",
+    "company": "Capgemini",
+    "location": "Mumbai",
+    "skills": ["Network Security", "Linux", "Python", "Ethical Hacking", "Firewalls"]
+  },
+  {
+    "title": "UI/UX Designer",
+    "company": "Zoho",
+    "location": "Chennai",
+    "skills": ["Figma", "Adobe XD", "UI Design", "Prototyping", "HTML"]
+  },
+  {
+    "title": "Cloud Engineer",
+    "company": "Amazon Web Services",
+    "location": "Bangalore",
+    "skills": ["AWS", "Terraform", "Linux", "Networking", "Python"]
+  },
+  {
+    "title": "Full Stack Developer",
+    "company": "Google",
+    "location": "Hyderabad",
+    "skills": ["HTML", "CSS", "JavaScript", "React", "Node.js", "MongoDB"]
+  },
+  {
+    "title": "AI Engineer",
+    "company": "Microsoft",
+    "location": "Bangalore",
+    "skills": ["Python", "Deep Learning", "Neural Networks", "TensorFlow", "Data Science"]
+  },
+  {
+    "title": "Game Developer",
+    "company": "Ubisoft",
+    "location": "Pune",
+    "skills": ["C++", "Unity", "C#", "Game Design", "Graphics Programming"]
+  },
+  {
+    "title": "IT Support Engineer",
+    "company": "Dell",
+    "location": "Chennai",
+    "skills": ["Networking", "Troubleshooting", "Windows", "Linux", "Customer Support"]
+  },
+  {
+    "title": "Embedded Systems Engineer",
+    "company": "Bosch",
+    "location": "Coimbatore",
+    "skills": ["C", "C++", "Embedded C", "Microcontrollers", "RTOS"]
+  },
+  {
+    "title": "Quality Assurance Tester",
+    "company": "Oracle",
+    "location": "Bangalore",
+    "skills": ["Selenium", "Java", "TestNG", "Manual Testing", "Automation Testing"]
+  },
+  {
+    "title": "Network Engineer",
+    "company": "Cisco",
+    "location": "Chennai",
+    "skills": ["Networking", "Cisco Routers", "Switching", "Firewall", "Linux"]
+  },
+  {
+    "title": "Blockchain Developer",
+    "company": "IBM",
+    "location": "Hyderabad",
+    "skills": ["Blockchain", "Solidity", "Ethereum", "Smart Contracts", "JavaScript"]
+  },
+  {
+    "title": "Machine Learning Engineer",
+    "company": "NVIDIA",
+    "location": "Bangalore",
+    "skills": ["Python", "TensorFlow", "Keras", "Pandas", "NumPy"]
+  },
+  {
+    "title": "System Administrator",
+    "company": "HP",
+    "location": "Chennai",
+    "skills": ["Linux", "Windows Server", "Networking", "Scripting", "Security"]
+  }
+]

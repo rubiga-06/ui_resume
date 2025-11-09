@@ -1,5 +1,9 @@
+// your existing imports
+import java.io.FileReader;
 import java.io.Serializable;
 import java.util.*;
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
 
 class Resume implements Serializable {
     private String fullName;
@@ -83,42 +87,78 @@ class Resume implements Serializable {
     }
 
     public String suggestJobs() {
-        if (skills.isEmpty()) {
+        if (skills == null || skills.isEmpty()) {
             return "No skills listed. Please add your skills to get job suggestions.";
         }
 
-        HashMap<String, List<String>> jobCategories = new HashMap<>();
-        jobCategories.put("Software Development", Arrays.asList("Java", "Python", "C++", "JavaScript", "SQL", "Git"));
-        jobCategories.put("Data Science", Arrays.asList("Python", "R", "SQL", "Machine Learning", "Statistics", "Data Analysis"));
-        jobCategories.put("Web Development", Arrays.asList("HTML", "CSS", "JavaScript", "React", "Node.js", "PHP"));
-        jobCategories.put("Mobile Development", Arrays.asList("Java", "Kotlin", "Swift", "React Native", "Flutter"));
-        jobCategories.put("DevOps", Arrays.asList("Linux", "Docker", "Kubernetes", "AWS", "CI/CD", "Python"));
-        jobCategories.put("Cybersecurity", Arrays.asList("Network Security", "Python", "Linux", "Encryption", "Ethical Hacking"));
-
         StringBuilder suggestions = new StringBuilder();
-        suggestions.append("Based on your skills, you might be suitable for:\n\n");
+        suggestions.append("🔍 Based on your skills, you might be suitable for:\n\n");
 
-        for (Map.Entry<String, List<String>> entry : jobCategories.entrySet()) {
-            String job = entry.getKey();
-            List<String> requiredSkills = entry.getValue();
-            
-            long matchingSkills = skills.stream()
-                .map(String::toLowerCase)
-                .filter(skill -> requiredSkills.stream()
-                    .anyMatch(req -> req.toLowerCase().contains(skill) || skill.contains(req.toLowerCase())))
-                .count();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONArray jobsArray = (JSONArray) parser.parse(new FileReader("data/jobs.json"));
 
-            if (matchingSkills >= 2) {
-                double matchPercentage = (matchingSkills * 100.0) / requiredSkills.size();
-                suggestions.append("• ").append(job)
-                          .append(" (Match: ").append(String.format("%.1f", matchPercentage)).append("%)\n");
+            for (Object obj : jobsArray) {
+                JSONObject job = (JSONObject) obj;
+                String title = (String) job.get("title");
+                String company = (String) job.get("company");
+                String location = (String) job.get("location");
+                JSONArray jobSkills = (JSONArray) job.get("skills");
+
+                long matchingSkills = skills.stream()
+                        .map(String::toLowerCase)
+                        .filter(skill -> jobSkills.stream()
+                                .anyMatch(js -> js.toString().toLowerCase().contains(skill)
+                                        || skill.contains(js.toString().toLowerCase())))
+                        .count();
+
+                if (matchingSkills >= 2) {
+                    double matchPercentage = (matchingSkills * 100.0) / jobSkills.size();
+                    suggestions.append("• ")
+                               .append(title)
+                               .append(" at ")
+                               .append(company)
+                               .append(" (")
+                               .append(location)
+                               .append(") — Match: ")
+                               .append(String.format("%.1f", matchPercentage))
+                               .append("%\n");
+                }
             }
+        } catch (Exception e) {
+            return "⚠️ Error loading job suggestions: " + e.getMessage();
         }
 
-        if (suggestions.toString().equals("Based on your skills, you might be suitable for:\n\n")) {
-            suggestions.append("No specific job matches found. Consider adding more diverse skills.");
+        if (suggestions.toString().equals("🔍 Based on your skills, you might be suitable for:\n\n")) {
+            suggestions.append("No specific job matches found. Try adding more diverse skills.");
         }
 
         return suggestions.toString();
+    }
+
+    // ✅ Added main method without changing any of your existing code
+    public static void main(String[] args) {
+        Resume resume = new Resume();
+        resume.setFullName("John Doe");
+        resume.setEmail("john@example.com");
+        resume.setPhone("1234567890");
+        resume.setAddress("123 Main St, City");
+        resume.setLinkedIn("linkedin.com/in/johndoe");
+        resume.setSummary("Motivated software developer seeking challenging roles.");
+
+        // Example Education & Experience
+        resume.addEducation(new Education("B.Tech", "Computer Science", "XYZ University", "2020"));
+        resume.addExperience(new Experience("Intern", "ABC Company", "Worked on Java projects", "2022"));
+
+        // Example skills
+        resume.addSkill("Java");
+        resume.addSkill("Python");
+        resume.addSkill("SQL");
+
+        // Print resume
+        System.out.println(resume.generateResumeText());
+
+        // Print job suggestions
+        System.out.println(resume.suggestJobs());
     }
 }
